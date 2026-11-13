@@ -8,7 +8,7 @@ function cleanText(value) {
   return typeof value === 'string' ? value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 5000) : '';
 }
 function meta(html, property) {
-  const escaped = property.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&');
+  const escaped = property;
   const patterns = [
     new RegExp("<meta\\b[^>]*(?:property|name)=[\"']" + escaped + "[\"'][^>]*content=[\"']([^\"']*)[\"'][^>]*>", 'i'),
     new RegExp("<meta\\b[^>]*content=[\"']([^\"']*)[\"'][^>]*(?:property|name)=[\"']" + escaped + "[\"'][^>]*>", 'i')
