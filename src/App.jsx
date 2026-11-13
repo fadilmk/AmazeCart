@@ -55,7 +55,7 @@ function Home({ products, categories, deals }) {
       </div>
       <div className="hero-art">
         <div className="editorial-visual">
-          <div className="editorial-image editorial-image-main"><img src="https://images.unsplash.com/photo-149 medios?auto=format&fit=crop&w=1100&q=85" alt="Everyday technology and desk accessories" loading="eager" fetchPriority="high" decoding="async"/></div>
+          <div className="editorial-image editorial-image-main"><img src="https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=1100&q=85" alt="Everyday technology and desk accessories" loading="eager" fetchPriority="high" decoding="async"/></div>
           <div className="editorial-image editorial-image-top"><img src="https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=700&q=85" alt="Wireless audio accessories" loading="eager" decoding="async"/></div>
           <div className="editorial-image editorial-image-bottom"><img src="https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=700&q=85" alt="Laptop desk accessories" loading="eager" decoding="async"/></div>
           <div className="editorial-index">OBJECTS FOR EVERYDAY LIVING <span>✳</span></div>
