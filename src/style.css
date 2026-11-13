@@ -530,3 +530,20 @@ body{color:#202923;background:#fff;font-family:var(--body-font,'DM Sans',sans-se
  .page-shell{padding:38px 18px 58px}
 }
 @media(prefers-reduced-motion:reduce){.product-card,.product-image-wrap img{transition:none}}
+
+
+/* Hero image cleanup: one intentional visual instead of a stock-photo collage */
+.editorial-image-top,.editorial-image-bottom,.editorial-index{display:none!important}
+.editorial-visual{width:100%;height:430px;position:relative;filter:none}
+.editorial-image-main{position:absolute;inset:0!important;width:100%!important;height:100%!important;border:0!important;border-radius:3px!important;background:#e5e7df;overflow:hidden;box-shadow:none!important}
+.editorial-image-main img{width:100%;height:100%;object-fit:cover;object-position:center 48%;display:block}
+.hero-art{min-width:0}
+@media(max-width:900px){
+ .editorial-visual{height:360px}
+}
+@media(max-width:640px){
+ .hero-art{height:auto;margin:4px 0 0}
+ .editorial-visual{height:auto;aspect-ratio:1.25/1}
+ .editorial-image-main{inset:0!important}
+ .editorial-image-main img{object-position:center}
+}
