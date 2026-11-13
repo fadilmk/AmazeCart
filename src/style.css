@@ -353,3 +353,73 @@ body{background:#fff;color:var(--ink);font-family:'DM Sans',sans-serif}
  .customer-hook-cta{align-items:flex-start;flex-direction:column}
  .customer-hook-cta>span{font-size:20px}
 }
+
+
+/* AmazeCart 2026 visual identity: bold useful-tech retail */
+:root{--brand-ink:#14243b;--brand-blue:#1c4ed8;--brand-orange:#ff6b35;--brand-paper:#f5f7fb}
+body{background:#fff;color:#14243b}
+.site-header{height:76px;border-bottom:1px solid #e7ebf2;background:rgba(255,255,255,.96)}
+.brand{color:#14243b;font-weight:800}
+.brand>span:last-child>span{color:#ff6b35}
+.brand-mark{background:#14243b;color:#fff;border-radius:11px;box-shadow:0 6px 16px #14243b25}
+.nav a{color:#45536a}
+.nav a:hover,.nav a.active{color:#1c4ed8}
+.nav a:after{background:#ff6b35}
+.header-search{background:#f3f5f9;border:1px solid #e6eaf1;border-radius:9px}
+.header-search button{background:#1c4ed8;border-radius:7px}
+.hero{background:linear-gradient(115deg,#f4f7fc 0%,#eef3fb 54%,#fff0e9 100%);padding-top:82px;padding-bottom:82px;min-height:625px}
+.hero:after{height:4px;background:linear-gradient(90deg,#ff6b35 0 28%,#1c4ed8 28% 100%)}
+.hero .eyebrow{background:#fff;border-color:#e0e7f1;color:#1c4ed8;border-radius:5px}
+.hero h1{font-family:var(--heading-font);font-size:clamp(56px,6vw,84px);letter-spacing:-5px;line-height:.99;color:#14243b}
+.hero h1 em{font-family:var(--heading-font);font-style:normal;font-weight:800;color:#1c4ed8;letter-spacing:-5px}
+.hero-copy>p{color:#5e6c80;font-size:15px;line-height:1.85}
+.btn{border-radius:8px;font-weight:700}
+.btn-primary{background:#ff6b35;box-shadow:0 7px 18px #ff6b3530}
+.btn-primary:hover{background:#ed5726;box-shadow:0 10px 22px #ff6b3540}
+.btn-light{border:1px solid #d5ddea;background:#fff;color:#20324d}
+.editorial-image{border-radius:9px;box-shadow:0 18px 45px #1a2c4820}
+.editorial-image-top,.editorial-image-bottom{border:7px solid #f4f7fc;border-radius:12px}
+.editorial-sticker{background:#ff6b35;border:4px solid #f4f7fc}
+.section{padding-top:76px;padding-bottom:76px}
+.section.tinted{background:#f5f7fb}
+.section-heading h2{color:#14243b;font-size:36px}
+.eyebrow{color:#1c4ed8}
+.category-tile{background:#fff;border:1px solid #e7ebf2;border-radius:12px;box-shadow:0 4px 14px #172b4d08}
+.category-tile>span{background:#edf2ff;color:#1c4ed8;border-radius:12px}
+.category-tile b{color:#20324d}
+.product-card{border:1px solid #edf0f5;border-radius:12px;padding:8px;box-shadow:0 5px 18px #172b4d08}
+.product-card:hover{border-color:#cbd8f3;box-shadow:0 14px 28px #172b4d12}
+.product-image-wrap{border-radius:9px;background:#f4f6fa}
+.product-card-body{padding:12px 5px 6px}
+.product-name{color:#20324d}
+.price-row strong{color:#14243b}
+.discount-pill{background:#e8f7ed;color:#237448;border-radius:5px}
+.featured-pill{background:#eaf0ff;color:#1c4ed8;border-radius:5px}
+.deal-banner{border-radius:12px;border:1px solid #e5eaf2;background:#fff1e9;color:#26364d}
+.deal-banner:nth-child(2){background:#eaf0ff}
+.deal-banner:nth-child(3){background:#eaf6ee}
+.deal-banner:nth-child(4){background:#fff6df}
+.customer-hook{background:#14243b}
+.customer-hook-grid article{background:#1b304d;border-color:#2b4364;border-radius:12px}
+.customer-hook-grid article:hover{border-color:#ff8b61;background:#203958}
+.customer-hook-heading .eyebrow{color:#ff9a70}
+.customer-hook-heading h2 em{color:#ff9a70}
+.trust-strip{background:#0e1b2e}
+.footer-compact{background:#f5f7fb}
+.footer-bottom{border-color:#e1e7f0;color:#718096}
+.product-importer{display:grid;gap:12px;padding:22px;margin:4px 0 24px;background:linear-gradient(120deg,#f0f5ff,#fff4ed);border:1px solid #dfe8f7;border-radius:12px}
+.product-importer .eyebrow{color:#1c4ed8}
+.product-importer h3{font-size:18px;color:#14243b;margin:5px 0}
+.product-importer p{font-size:12px;color:#64748b;line-height:1.6;margin:0}
+.import-controls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}
+.import-controls input{min-width:0;padding:13px 14px;border:1px solid #d8e0ed;border-radius:8px;background:#fff}
+.product-importer>small{color:#748197;font-size:11px;line-height:1.6}
+@media(max-width:640px){
+ .hero{padding:48px 20px 38px;min-height:0}
+ .hero h1{font-size:clamp(48px,13vw,64px);letter-spacing:-3px}
+ .hero h1 em{letter-spacing:-3px}
+ .section{padding:48px 18px}
+ .section-heading h2{font-size:29px}
+ .import-controls{grid-template-columns:1fr}
+ .product-importer{padding:16px}
+}
