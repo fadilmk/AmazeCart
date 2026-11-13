@@ -12,6 +12,7 @@ function cleanText(value) {
 }
 function cleanProductName(value) {
   return cleanText(value)
+    .replace(/^Buy\s+/i, '')
     .replace(/\s*(?:\||-)\s*Online at Low Prices in India\s*(?:-|\|)\s*Amazon\.in\s*$/i, '')
     .replace(/\s*(?:\||-)\s*Amazon\.in\s*$/i, '')
     .trim();
