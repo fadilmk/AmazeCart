@@ -8,10 +8,18 @@ function cleanText(value) {
   return typeof value === 'string' ? value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 5000) : '';
 }
 function meta(html, property) {
+  const escaped = property.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\function meta(html, property) {
   const escaped = property.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const patterns = [
     new RegExp('<meta[^>]+(?:property|name)=["\\']' + escaped + '["\\'][^>]+content=["\\']([^"\\']*)["\\']', 'i'),
     new RegExp('<meta[^>]+content=["\\']([^"\\']*)["\\'][^>]+(?:property|name)=["\\']' + escaped + '["\\']', 'i')
+  ];
+  for (const pattern of patterns) { const match = html.match(pattern); if (match) return cleanText(match[1]); }
+  return '';
+}');
+  const patterns = [
+    new RegExp(`<meta\\b[^>]*(?:property|name)=["']${escaped}["'][^>]*content=["']([^"']*)["'][^>]*>`, 'i'),
+    new RegExp(`<meta\\b[^>]*content=["']([^"']*)["'][^>]*(?:property|name)=["']${escaped}["'][^>]*>`, 'i')
   ];
   for (const pattern of patterns) { const match = html.match(pattern); if (match) return cleanText(match[1]); }
   return '';
