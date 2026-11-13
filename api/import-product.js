@@ -4,8 +4,22 @@ const ALLOWED_HOSTS = new Set([
   'www.amazon.in','amazon.in','amzn.in'
 ]);
 
+function decodeEntities(value) {
+  return value.replace(/&amp;/gi, '&').replace(/&quot;/gi, '"').replace(/&#39;|&apos;/gi, "'").replace(/&lt;/gi, '<').replace(/&gt;/gi, '>').replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n))).replace(/&#x([\da-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)));
+}
 function cleanText(value) {
-  return typeof value === 'string' ? value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 5000) : '';
+  return typeof value === 'string' ? decodeEntities(value.replace(/<[^>]*>/g, ' ')).replace(/\s+/g, ' ').trim().slice(0, 5000) : '';
+}
+function cleanProductName(value) {
+  return cleanText(value)
+    .replace(/\s*(?:\||-)\s*Online at Low Prices in India\s*(?:-|\|)\s*Amazon\.in\s*$/i, '')
+    .replace(/\s*(?:\||-)\s*Amazon\.in\s*$/i, '')
+    .trim();
+}
+function cleanDescription(value) {
+  let text = cleanText(value);
+  text = text.replace(/\s*(?:Free Shipping|Cash on Delivery Available|Visit the .*? Store).*$/i, '').trim();
+  return text.slice(0, 420);
 }
 function meta(html, property) {
   const escaped = property;
@@ -72,8 +86,8 @@ export default async function handler(req, res) {
     }
     for (const match of html.matchAll(/(?:hiRes|large|mainUrl|landingImage)\s*[:=]\s*["'](https?:\\?\/\\?\/[^"'\\s]+)/gi)) addImage(match[1].replace(/\\\//g,'/'));
     const images = [...new Set(imageCandidates.map(v => v.replace(/&amp;/g,'&').trim()).filter(v => /^https:\/\//i.test(v)))].slice(0,8);
-    const name = cleanText(product.name) || meta(html,'og:title') || meta(html,'twitter:title') || cleanText((html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)||[])[1]||'');
-    const description = cleanText(product.description) || meta(html,'og:description') || meta(html,'description');
+    const name = cleanProductName(product.name || meta(html,'og:title') || meta(html,'twitter:title') || cleanText((html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)||[])[1]||''));
+    const description = cleanDescription(product.description || meta(html,'og:description') || meta(html,'description'));
     const price = Number(offers.price || offers.lowPrice || 0) || '';
     const currency = offers.priceCurrency || 'INR';
     const retailer = finalUrl.hostname.includes('flipkart') ? 'Flipkart' : finalUrl.hostname.includes('meesho') ? 'Meesho' : 'Amazon';
