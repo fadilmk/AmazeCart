@@ -547,3 +547,14 @@ body{color:#202923;background:#fff;font-family:var(--body-font,'DM Sans',sans-se
  .editorial-image-main{inset:0!important}
  .editorial-image-main img{object-position:center}
 }
+
+
+/* Admin category management */
+.category-admin-row{display:grid;grid-template-columns:42px minmax(120px,1fr) auto auto;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid #eeeee8}
+.category-admin-icon{display:grid;place-items:center;width:36px;height:36px;border-radius:4px;background:#eef1eb;font-size:19px}
+.category-admin-row .muted{font-size:11px}
+.category-editor{margin-top:22px;padding:22px;background:#f7f7f3;border:1px solid #e8e9e1;border-radius:4px;display:grid;gap:15px;max-width:560px}
+.category-editor label{display:grid;gap:7px;font-size:12px;font-weight:600;color:#354239}
+.category-editor input,.category-editor select{width:100%;min-height:42px;padding:10px 12px;border:1px solid #dedfd7;border-radius:3px;background:#fff;color:#202923;font:inherit}
+.category-editor .panel-heading{margin-bottom:2px}
+@media(max-width:640px){.category-admin-row{grid-template-columns:36px minmax(90px,1fr) auto;gap:8px}.category-admin-row>.muted{grid-column:2;grid-row:2}.category-admin-row .table-actions{grid-column:3;grid-row:1/3}}
