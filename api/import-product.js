@@ -55,8 +55,23 @@ export default async function handler(req, res) {
     const html = (await response.text()).slice(0, 2_000_000);
     const product = structuredProduct(html) || {};
     const offers = product.offers ? (Array.isArray(product.offers) ? product.offers[0] : product.offers) : {};
-    const imageValue = product.image || meta(html,'og:image') || meta(html,'twitter:image');
-    const images = (Array.isArray(imageValue) ? imageValue : imageValue ? [imageValue] : []).map(v => typeof v === 'string' ? v : v?.url).filter(v => typeof v === 'string' && /^https:\/\//i.test(v)).slice(0,8);
+    const imageCandidates = [];
+    const addImage = value => {
+      if (typeof value === 'string') imageCandidates.push(value);
+      else if (Array.isArray(value)) value.forEach(addImage);
+      else if (value && typeof value === 'object') {
+        addImage(value.url || value.contentUrl || value.src || value['@id']);
+      }
+    };
+    addImage(product.image);
+    for (const key of ['og:image','og:image:secure_url','twitter:image']) addImage(meta(html,key));
+    // Amazon often exposes gallery images in attributes rather than Product JSON-LD.
+    for (const match of html.matchAll(/data-old-hires=["']([^"']+)["']/gi)) addImage(match[1]);
+    for (const match of html.matchAll(/data-a-dynamic-image=["']([^"']+)["']/gi)) {
+      try { addImage(Object.keys(JSON.parse(match[1].replace(/&quot;/g,'"').replace(/&amp;/g,'&')))); } catch {}
+    }
+    for (const match of html.matchAll(/(?:hiRes|large|mainUrl|landingImage)\s*[:=]\s*["'](https?:\\?\/\\?\/[^"'\\s]+)/gi)) addImage(match[1].replace(/\\\//g,'/'));
+    const images = [...new Set(imageCandidates.map(v => v.replace(/&amp;/g,'&').trim()).filter(v => /^https:\/\//i.test(v)))].slice(0,8);
     const name = cleanText(product.name) || meta(html,'og:title') || meta(html,'twitter:title') || cleanText((html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)||[])[1]||'');
     const description = cleanText(product.description) || meta(html,'og:description') || meta(html,'description');
     const price = Number(offers.price || offers.lowPrice || 0) || '';
