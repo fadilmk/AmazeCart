@@ -953,3 +953,60 @@ body{background:#fff;color:var(--ac-ink);font-family:'DM Sans',sans-serif}
     color:#fff!important;
   }
 }
+
+
+/* Definitive mobile search sizing: explicit viewport width and 3-column layout */
+@media(max-width:760px){
+  .site-header.search-open .header-inner .header-search{
+    position:fixed!important;
+    top:calc(env(safe-area-inset-top, 0px) + 74px)!important;
+    left:16px!important;
+    right:auto!important;
+    width:calc(100vw - 32px)!important;
+    max-width:calc(100vw - 32px)!important;
+    min-width:0!important;
+    height:60px!important;
+    min-height:60px!important;
+    display:grid!important;
+    grid-template-columns:24px minmax(0,1fr) 42px!important;
+    align-items:center!important;
+    column-gap:12px!important;
+    box-sizing:border-box!important;
+    padding:0 9px 0 14px!important;
+    overflow:hidden!important;
+  }
+  .site-header.search-open .header-inner .header-search>svg{
+    display:block!important;
+    width:21px!important;
+    height:21px!important;
+    margin:0!important;
+    flex:none!important;
+  }
+  .site-header.search-open .header-inner .header-search input{
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    height:48px!important;
+    box-sizing:border-box!important;
+    margin:0!important;
+    padding:0 2px!important;
+    font-size:16px!important;
+    line-height:1.4!important;
+    border:0!important;
+    background:transparent!important;
+    color:#141413!important;
+    outline:none!important;
+  }
+  .site-header.search-open .header-inner .header-search button{
+    display:grid!important;
+    width:42px!important;
+    height:42px!important;
+    min-width:42px!important;
+    max-width:42px!important;
+    box-sizing:border-box!important;
+    margin:0!important;
+    padding:0!important;
+    place-items:center!important;
+  }
+}
