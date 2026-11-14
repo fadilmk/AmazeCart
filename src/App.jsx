@@ -107,17 +107,35 @@ function Listing({ products, title, subtitle='', categories=[] }) {
 }
 
 function SearchPage({ products,categories }) {
-  const [params]=useSearchParams();
-  const rawQuery=(params.get('q')||'').trim().toLocaleLowerCase();
-  const queryTokens=rawQuery.normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').split(/[^a-z0-9]+/).filter(Boolean);
-  const results=queryTokens.length===0
+  const [params] = useSearchParams();
+  const rawQuery = (params.get('q') || '').trim();
+  const normalizedQuery = rawQuery.toLocaleLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
+  const queryTokens = normalizedQuery.split(/[^a-z0-9]+/).filter(Boolean);
+
+  const results = queryTokens.length === 0
     ? products
-    : products.filter(product=>{
-        const searchable=[product.name,product.description,product.categoryName,product.categoryId,...(product.tags||[])].filter(Boolean).join(' ').toLocaleLowerCase();
-        const words=searchable.normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').split(/[^a-z0-9]+/).filter(Boolean);
-        return queryTokens.every(queryToken=>words.some(word=>word===queryToken || (queryToken.length>=3 && word.startsWith(queryToken))));
+    : products.filter(product => {
+        const searchableText = [
+          product.name,
+          product.description,
+          product.categoryName,
+          product.categoryId,
+          ...(product.tags || [])
+        ].filter(Boolean).join(' ').toLocaleLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
+        const words = searchableText.split(/[^a-z0-9]+/).filter(Boolean);
+        return queryTokens.every(token =>
+          words.some(word => word === token || (token.length >= 3 && word.startsWith(token)))
+        );
       });
-  return <Listing products={results} title={rawQuery ? `Results for “${params.get('q')}”` : 'Discover products'}”\x60:'Discover products'} subtitle="Search and filter products across available shopping options." categories={categories}/>;
+
+  return (
+    <Listing
+      products={results}
+      title={rawQuery ? `Results for "${rawQuery}"` : 'Discover products'}
+      subtitle="Search and filter products across available shopping options."
+      categories={categories}
+    />
+  );
 }
 
 function ProductPage({ products }) {
