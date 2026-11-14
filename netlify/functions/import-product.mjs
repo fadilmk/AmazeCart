@@ -37,7 +37,11 @@ function extract(h,url){
  for(const m of h.matchAll(/data-old-hires=["']([^"']+)["']/gi))add(m[1],11);
  for(const m of h.matchAll(/data-a-dynamic-image=["']([^"']+)["']/gi)){try{add(Object.keys(JSON.parse(m[1].replace(/&quot;/g,'"').replace(/&amp;/g,'&'))),11);}catch{}}
  for(const m of h.matchAll(/!\[[^\]]*\]\((https?:\/\/[^)]+)\)/g))add(m[1],4);
- const seen=new Set(),images=candidates.sort((a,b)=>b.score-a.score).filter(x=>{if(seen.has(x.url))return false;seen.add(x.url);return true;}).slice(0,6).map(x=>x.url);
+ const isMeesho=url.includes('meesho.com');
+ const filtered=isMeesho
+  ? candidates.filter(x=>/^https:\/\/images\.meesho\.com\/images\/products\//i.test(x.url)&&!/(?:offer|discount|banner|coupon|logo|badge)/i.test(x.url))
+  : candidates;
+ const seen=new Set(),images=filtered.sort((a,b)=>b.score-a.score).filter(x=>{if(seen.has(x.url))return false;seen.add(x.url);return true;}).slice(0,6).map(x=>x.url);
  let price=Number(o.price||o.lowPrice||0)||'';
  if(!price){const v=meta(h,'product:price:amount')||(h.match(/(?:₹|INR)\s*([\d,]+(?:\.\d{1,2})?)/i)||[])[1];price=Number(String(v||'').replace(/,/g,''))||'';}
  return {name,description,images,price,originalPrice:'',platform:url.includes('meesho')?'Meesho':url.includes('flipkart')?'Flipkart':'Amazon',productUrl:url,source:'decodo'};
