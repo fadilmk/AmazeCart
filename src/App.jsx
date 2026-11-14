@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Link, NavLink, Route, Routes, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { Search, Menu, X, ArrowRight, Heart, ExternalLink, SlidersHorizontal, ChevronDown, ChevronLeft, ChevronRight, Sparkles, Tag, LayoutDashboard, Package, Layers, LogOut, Plus, Trash2, Edit3, Eye, EyeOff, ShoppingBag, TrendingUp, ShieldCheck } from 'lucide-react'
+import { Search, Menu, X, ArrowRight, Heart, ExternalLink, SlidersHorizontal, ChevronDown, ChevronLeft, ChevronRight, Sparkles, Tag, LayoutDashboard, Package, Layers, LogOut, Plus, Trash2, Edit3, Eye, EyeOff, ShoppingBag, TrendingUp, ShieldCheck, Sun, Moon, Type } from 'lucide-react'
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth'
 import { auth, db, firebaseReady, adminUid } from './lib/firebase'
 import { demoProducts, demoCategories, loadCollection, saveDocument, removeDocument, bestOffer, discount, recordClick } from './lib/data'
@@ -17,7 +17,7 @@ function PlatformLogo({ platform }) {
   </span>
 }
 
-function Header({ search, setSearch }) {
+function Header({ search, setSearch, theme, setTheme, fontScale, setFontScale }) {
   const [open, setOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const navigate = useNavigate()
@@ -32,6 +32,7 @@ function Header({ search, setSearch }) {
     <Link to="/" className="brand" onClick={()=>{setOpen(false);setSearchOpen(false)}}><span className="brand-mark"><ShoppingBag size={20}/></span><span>Amaze<span>Cart</span></span></Link>
     <nav className={open ? 'nav open' : 'nav'}>
       <NavLink to="/" onClick={()=>setOpen(false)}>Home</NavLink><NavLink to="/categories" onClick={()=>setOpen(false)}>Categories</NavLink><NavLink to="/deals" onClick={()=>setOpen(false)}>Deals</NavLink>
+      <div className="nav-preferences"><button type="button" className="theme-toggle" onClick={()=>setTheme(theme==='dark'?'light':'dark')}><span className="theme-icon">{theme==='dark'?<Sun size={16}/>:<Moon size={16}/>}</span>{theme==='dark'?'Light mode':'Dark mode'}</button><div className="font-controls" aria-label="Font size"><Type size={15}/><button type="button" aria-label="Decrease font size" disabled={fontScale==='small'} onClick={()=>setFontScale('small')}>A−</button><button type="button" aria-label="Default font size" className={fontScale==='normal'?'selected':''} onClick={()=>setFontScale('normal')}>A</button><button type="button" aria-label="Increase font size" disabled={fontScale==='large'} onClick={()=>setFontScale('large')}>A+</button></div></div>
     </nav>
     <form className="header-search" role="search" onSubmit={submit}>
       <Search size={17}/><input type="search" autoFocus={searchOpen} aria-label="Search products" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search products..." enterKeyHint="search"/>
@@ -82,7 +83,6 @@ function Home({ products, categories, deals }) {
       </div>
       <div className="hero-bottom-note"><span>DISCOVER</span><b>Better finds. Clearer choices.</b><span>AMAZECART / INDIA</span></div>
     </section>
-    <section className="home-benefits"><div><ShoppingBag/><b>Curated finds</b><span>Useful products, thoughtfully listed</span></div><div><Layers/><b>Compare stores</b><span>See available shopping options</span></div><div><ShieldCheck/><b>Shop your way</b><span>Choose the retailer that suits you</span></div></section>
     <section className="section category-section">
       <div className="section-heading"><div><span className="eyebrow">START EXPLORING</span><h2>Shop by category</h2><p className="section-sub">Find what you need, without the endless scrolling.</p></div><Link to="/categories" className="text-link">All categories <ArrowRight size={15}/></Link></div>
       <div className="category-grid">{categories.filter(c => c.active !== false).slice(0, 6).map(c => <Link to={`/category/${c.id}`} className="category-tile" key={c.id}><span>{c.icon || '↗'}</span><b>{c.name}</b><ArrowRight size={15}/></Link>)}</div>
@@ -175,12 +175,14 @@ function Admin({ products,categories,deals,refresh,onProductDeleted }) {
 export default function App(){
   const location=useLocation();const isAdminRoute=location.pathname.startsWith('/admin');
   useEffect(()=>{window.scrollTo({top:0,left:0,behavior:'auto'});},[location.pathname,location.search]);
+  const [theme,setTheme]=useState(()=>localStorage.getItem('amazecart-theme')||'light');const [fontScale,setFontScale]=useState(()=>localStorage.getItem('amazecart-font-scale')||'normal');
+  useEffect(()=>{localStorage.setItem('amazecart-theme',theme);localStorage.setItem('amazecart-font-scale',fontScale)},[theme,fontScale]);
   const [products,setProducts]=useState(demoProducts);const [categories,setCategories]=useState(demoCategories);const [deals,setDeals]=useState([]);const [search,setSearch]=useState('');const [user,setUser]=useState(null);const [loading,setLoading]=useState(true)
   const refresh=async()=>{try{const [p,c,d]=await Promise.all([loadCollection('products'),loadCollection('categories'),loadCollection('deals')]);setProducts(p);setCategories(c);setDeals(d)}catch(e){console.error(e)}}
   useEffect(()=>{refresh().finally(()=>setLoading(false));if(auth)return onAuthStateChanged(auth,u=>{setUser(u);if(u)refresh()});},[])
   const adminOk=!!user&&!!adminUid&&user.uid===adminUid
   if(loading)return <div className="loading-screen"><span className="brand-mark"><ShoppingBag/></span><b>AmazeCart</b><span>Getting things ready…</span></div>
-  return <>{!isAdminRoute&&<Header search={search} setSearch={setSearch}/>}<div className="route-transition" key={location.pathname+location.search}><Routes><Route path="/" element={<Home products={products.filter(p=>p.published!==false)} categories={categories} deals={deals}/>}/><Route path="/categories" element={<Categories categories={categories}/>}/><Route path="/category/:id" element={<CategoryRoute products={products} categories={categories}/>}/><Route path="/deals" element={<DealsPage products={products} categories={categories} deals={deals}/>}/><Route path="/search" element={<SearchPage products={products.filter(p=>p.published!==false)} categories={categories}/>}/><Route path="/product/:slug" element={<ProductPage products={products.filter(p=>p.published!==false)}/>}/><Route path="/admin/*" element={!firebaseReady?<AdminSetup/>:adminOk?<Admin products={products} categories={categories} deals={deals} refresh={refresh} onProductDeleted={id=>setProducts(current=>current.filter(p=>p.id!==id))}/>:<AdminLogin onLogin={()=>{}}/>}/><Route path="*" element={<main className="page-shell"><h1>Page not found</h1><Link to="/">Return home</Link></main>}/></Routes></div>{!isAdminRoute&&<Footer/>}</>
+  return <div className={`app-root theme-${theme}`} data-font-size={fontScale}>{!isAdminRoute&&<Header search={search} setSearch={setSearch} theme={theme} setTheme={setTheme} fontScale={fontScale} setFontScale={setFontScale}/>}<div className="route-transition" key={location.pathname+location.search}><Routes><Route path="/" element={<Home products={products.filter(p=>p.published!==false)} categories={categories} deals={deals}/>}/><Route path="/categories" element={<Categories categories={categories}/>}/><Route path="/category/:id" element={<CategoryRoute products={products} categories={categories}/>}/><Route path="/deals" element={<DealsPage products={products} categories={categories} deals={deals}/>}/><Route path="/search" element={<SearchPage products={products.filter(p=>p.published!==false)} categories={categories}/>}/><Route path="/product/:slug" element={<ProductPage products={products.filter(p=>p.published!==false)}/>}/><Route path="/admin/*" element={!firebaseReady?<AdminSetup/>:adminOk?<Admin products={products} categories={categories} deals={deals} refresh={refresh} onProductDeleted={id=>setProducts(current=>current.filter(p=>p.id!==id))}/>:<AdminLogin onLogin={()=>{}}/>}/><Route path="*" element={<main className="page-shell"><h1>Page not found</h1><Link to="/">Return home</Link></main>}/></Routes></div>{!isAdminRoute&&<Footer/>}</div>
 }
 function CategoryRoute({products,categories}){const {id}=useParams();const c=categories.find(x=>x.id===id);return <Listing products={products.filter(p=>p.published!==false&&p.categoryId===id)} title={c?.name||'Category'} subtitle="Explore products in this category." categories={categories}/>}
 function DealsPage({products,categories,deals}){const [params]=useSearchParams();const max=Number(params.get('max')||0);const collectionId=params.get('collection');const selected=deals.find(d=>d.id===collectionId);const list=products.filter(p=>p.published!==false&&(selected?(selected.productIds||[]).includes(p.id):(!max||(bestOffer(p)?.price||Infinity)<=max)));return <><main className="page-shell"><div className="page-heading"><span className="eyebrow">BUDGET-FRIENDLY FINDS</span><h1>{selected?selected.name:max?`Deals under ₹${max}`:'Deals worth discovering'}</h1><p>{selected?.description||'Browse budget-friendly finds and curated offers.'}</p></div>{!selected&&!max&&deals.filter(d=>d.active!==false).length>0&&<div className="custom-deal-list">{deals.filter(d=>d.active!==false).map(d=><Link to={`/deals?collection=${d.id}`} className="custom-deal-card" key={d.id}><Tag/><b>{d.name}</b><span>{(d.productIds||[]).length} products</span><ArrowRight size={15}/></Link>)}</div>}<ProductGrid products={list}/></main></>}
