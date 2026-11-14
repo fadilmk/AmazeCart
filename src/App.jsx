@@ -81,7 +81,6 @@ function Home({ products, categories, deals }) {
         </Link> : <div className="hero-empty-card"><ShoppingBag size={36}/><b>Good finds are on the way.</b><span>New products will appear here.</span></div>}
         <div className="hero-orbit orbit-one"/><div className="hero-orbit orbit-two"/>
       </div>
-      <div className="hero-bottom-note"><span>DISCOVER</span><b>Better finds. Clearer choices.</b><span>AMAZECART / INDIA</span></div>
     </section>
     <section className="section category-section">
       <div className="section-heading"><div><span className="eyebrow">START EXPLORING</span><h2>Shop by category</h2><p className="section-sub">Find what you need, without the endless scrolling.</p></div><Link to="/categories" className="text-link">All categories <ArrowRight size={15}/></Link></div>
