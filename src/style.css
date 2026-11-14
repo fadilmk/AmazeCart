@@ -890,3 +890,66 @@ body{background:#fff;color:var(--ac-ink);font-family:'DM Sans',sans-serif}
  .home-deals-band{margin-left:24px;margin-right:24px}
 }
 @media(prefers-reduced-motion:reduce){.hero-feature-card,.category-tile,.product-card,.btn{transition:none}}
+
+
+/* Mobile search overlay: keep the complete input visible above page content */
+@media(max-width:760px){
+  .site-header.search-open{z-index:100}
+  .site-header.search-open .header-inner{position:relative}
+  .site-header.search-open .header-inner .header-search{
+    display:flex!important;
+    position:fixed!important;
+    top:calc(env(safe-area-inset-top, 0px) + 74px)!important;
+    left:12px!important;
+    right:12px!important;
+    width:auto!important;
+    min-width:0!important;
+    height:56px!important;
+    box-sizing:border-box!important;
+    margin:0!important;
+    padding:0 10px 0 14px!important;
+    gap:10px!important;
+    align-items:center!important;
+    background:#fff!important;
+    border:1px solid #d6ddd5!important;
+    border-radius:10px!important;
+    box-shadow:0 12px 30px rgba(20,20,19,.14)!important;
+    z-index:1001!important;
+    overflow:visible!important;
+  }
+  .site-header.search-open .header-inner .header-search>svg{
+    display:block!important;
+    flex:0 0 19px!important;
+    width:19px!important;
+    height:19px!important;
+  }
+  .site-header.search-open .header-inner .header-search input{
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+    flex:1 1 auto!important;
+    width:0!important;
+    min-width:0!important;
+    height:42px!important;
+    padding:0 4px!important;
+    border:0!important;
+    outline:0!important;
+    background:transparent!important;
+    color:#141413!important;
+    font:14px/1.3 'DM Sans',sans-serif!important;
+    -webkit-appearance:none;
+    appearance:none;
+  }
+  .site-header.search-open .header-inner .header-search input::placeholder{color:#777;opacity:1}
+  .site-header.search-open .header-inner .header-search button{
+    display:grid!important;
+    flex:0 0 38px!important;
+    width:38px!important;
+    height:38px!important;
+    place-items:center!important;
+    border:0!important;
+    border-radius:7px!important;
+    background:#176b50!important;
+    color:#fff!important;
+  }
+}
