@@ -1663,3 +1663,46 @@ body{background:var(--ac-paper);color:var(--ac-ink)}
  .app-root .font-controls{min-height:38px}
  .theme-dark .site-header .nav{background:#202722!important}
 }
+
+
+/* Header theme switch: always visible beside the mobile menu */
+.app-root .site-header .theme-toggle{
+  width:40px;height:40px;min-height:40px;padding:0;flex:0 0 40px;
+  display:inline-flex;align-items:center;justify-content:center;
+  border:1px solid var(--ac-line);border-radius:13px;
+  color:var(--ac-ink);background:var(--ac-white);
+  box-shadow:0 2px 0 rgba(255,255,255,.85) inset,0 3px 8px rgba(32,41,35,.07);
+}
+.app-root .site-header .theme-toggle span{display:none}
+.app-root .site-header .theme-toggle:hover{transform:translateY(-1px);background:#eee9dd}
+.app-root .site-header .mobile-search-toggle{
+  display:none;border:1px solid var(--ac-line);background:var(--ac-white);
+  width:40px;height:40px;align-items:center;justify-content:center;
+  color:var(--ac-ink);border-radius:13px;
+}
+.theme-dark .site-header .theme-toggle,.theme-dark .site-header .mobile-search-toggle{
+  background:#202722!important;color:#eeeae1!important;border-color:#414a43!important;
+}
+@media(max-width:760px){
+  .app-root .site-header .mobile-search-toggle{display:inline-flex}
+  .app-root .site-header .theme-toggle{width:39px;height:39px;min-height:39px;flex-basis:39px}
+  .app-root .site-header .mobile-menu{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:40px;height:40px;padding:0;border:1px solid var(--ac-line);
+    background:var(--ac-white);color:var(--ac-ink);border-radius:13px;
+  }
+  .app-root .site-header .header-inner{gap:8px}
+  .app-root .site-header .brand{margin-right:auto}
+  .app-root .site-header .nav-preferences{display:none!important}
+  .app-root .site-header .header-search{left:12px;right:12px}
+  /* Improve legibility of secondary information without enlarging every heading */
+  .app-root .eyebrow{font-size:11px;letter-spacing:1.45px}
+  .app-root .section-sub,.app-root .page-heading p{font-size:15px;line-height:1.65}
+  .app-root .muted,.app-root .card-foot .muted{font-size:12px}
+  .app-root .product-name{font-size:12px;line-height:1.5}
+  .app-root .card-foot .text-link,.app-root .text-link{font-size:11px}
+  .app-root .small,.app-root .disclosure-note{font-size:11px;line-height:1.55}
+  .app-root .result-count,.app-root .sort-label{font-size:12px}
+  .app-root .offer-heading,.app-root .store-brand{font-size:13px}
+  .app-root .offer-heading span,.app-root .offer-price del{font-size:11px}
+}
