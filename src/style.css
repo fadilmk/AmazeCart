@@ -893,7 +893,6 @@ body{background:#fff;color:var(--ac-ink);font-family:'DM Sans',sans-serif}
 
 
 /* AMAZECART — INDUSTRIAL ARCHIVAL DESIGN SYSTEM */
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 :root{--paper:#f5f4f0;--white:#fff;--stone:#ebe9e2;--line:#dcdad3;--ink:#141413;--muted:#6e6c65;--orange:#ff4d00;--green:#234b3e;--font-head:'Space Grotesk',sans-serif;--font-body:'Instrument Sans',sans-serif;--font-mono:'JetBrains Mono',monospace;color:var(--ink);background:var(--paper);font-family:var(--font-body);font-synthesis:none;text-rendering:optimizeLegibility}
 html{scroll-behavior:smooth;background:var(--paper)}
 body{min-width:320px;background:var(--paper);color:var(--ink);font-family:var(--font-body)}
