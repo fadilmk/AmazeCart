@@ -117,7 +117,7 @@ function SearchPage({ products,categories }) {
         const words=searchable.normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').split(/[^a-z0-9]+/).filter(Boolean);
         return queryTokens.every(queryToken=>words.some(word=>word===queryToken || (queryToken.length>=3 && word.startsWith(queryToken))));
       });
-  return <Listing products={results} title={rawQuery?\x60Results for “\x24{params.get('q')}”\x60:'Discover products'} subtitle="Search and filter products across available shopping options." categories={categories}/>;
+  return <Listing products={results} title={rawQuery ? `Results for “${params.get('q')}”` : 'Discover products'}”\x60:'Discover products'} subtitle="Search and filter products across available shopping options." categories={categories}/>;
 }
 
 function ProductPage({ products }) {
