@@ -52,7 +52,7 @@ function extract(h,url){
   }
   return x.url;
  });
- const isAmazon=/amazon\\.in$|amzn\\.in$/i.test(new URL(url).hostname);
+ const isAmazon=/amazon\.in$|amzn\.in$/i.test(new URL(url).hostname);
  const parsePrice = value => {
   const match=String(value||'').replace(/<[^>]*>/g,' ').match(/(?:₹|INR)?\\s*([0-9][0-9,]*(?:\\.[0-9]{1,2})?)/i);
   if(!match)return '';
@@ -65,10 +65,10 @@ function extract(h,url){
   price=parsePrice(o.price||o.lowPrice);
   if(!price) {
    const selectors=[
-     new RegExp(String.raw\`<span[^>]*id=["']priceblock_ourprice["'][^>]*>([\s\S]*?)<\/span>\`, 'i'),
-     new RegExp(String.raw\`<span[^>]*id=["']priceblock_dealprice["'][^>]*>([\s\S]*?)<\/span>\`, 'i'),
-     new RegExp(String.raw\`<span[^>]*class=["'][^"']*apexPriceToPay[^"']*["'][^>]*>[\s\S]*?<span[^>]*class=["'][^"']*a-offscreen["'][^>]*>([\s\S]*?)<\/span>\`, 'i'),
-     new RegExp(String.raw\`<div[^>]*id=["']corePrice_feature_div["'][^>]*>[\s\S]{0,2500}?<span[^>]*class=["'][^"']*a-offscreen["'][^>]*>([\s\S]*?)<\/span>\`, 'i')
+     new RegExp(String.raw`<span[^>]*id=["']priceblock_ourprice["'][^>]*>([\s\S]*?)<\/span>`, 'i'),
+     new RegExp(String.raw`<span[^>]*id=["']priceblock_dealprice["'][^>]*>([\s\S]*?)<\/span>`, 'i'),
+     new RegExp(String.raw`<span[^>]*class=["'][^"']*apexPriceToPay[^"']*["'][^>]*>[\s\S]*?<span[^>]*class=["'][^"']*a-offscreen["'][^>]*>([\s\S]*?)<\/span>`, 'i'),
+     new RegExp(String.raw`<div[^>]*id=["']corePrice_feature_div["'][^>]*>[\s\S]{0,2500}?<span[^>]*class=["'][^"']*a-offscreen["'][^>]*>([\s\S]*?)<\/span>`, 'i')
     ];
    for(const re of selectors){const m=h.match(re);if(m){price=parsePrice(m[1]);if(price)break;}}
   }
