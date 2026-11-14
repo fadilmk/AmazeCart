@@ -1706,3 +1706,69 @@ body{background:var(--ac-paper);color:var(--ac-ink)}
   .app-root .offer-heading,.app-root .store-brand{font-size:13px}
   .app-root .offer-heading span,.app-root .offer-price del{font-size:11px}
 }
+
+
+/* Navigation: seamless bar, rounded active/hover pills, no underline */
+.app-root .site-header .nav{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  padding:0!important;
+  gap:6px;
+}
+.app-root .site-header .nav a,
+.app-root .site-header .nav a:hover,
+.app-root .site-header .nav a.active{
+  text-decoration:none!important;
+  border:0!important;
+}
+.app-root .site-header .nav a:after,
+.app-root .site-header .nav a::after{display:none!important;content:none!important}
+.app-root .site-header .nav a{
+  min-height:40px;padding:0 20px;border-radius:999px;
+  color:var(--ac-muted);
+  background:transparent!important;
+  box-shadow:none!important;
+  transition:background .2s,color .2s,transform .2s;
+}
+.app-root .site-header .nav a:hover{
+  color:var(--ac-ink);background:rgba(125,135,122,.12)!important;
+}
+.app-root .site-header .nav a.active{
+  color:#fff!important;background:var(--ac-green)!important;
+  box-shadow:0 2px 8px rgba(23,59,45,.16)!important;
+}
+.theme-dark .site-header .nav a{color:#c2c9c0!important}
+.theme-dark .site-header .nav a:hover{background:#303a32!important;color:#fff!important}
+.theme-dark .site-header .nav a.active{background:#426b53!important;color:#fff!important}
+
+/* The nav links sit on the same continuous surface as the header */
+.app-root .site-header .header-inner{background:transparent}
+.app-root .site-header{background:var(--ac-paper)!important}
+.theme-dark .site-header{background:#181e1a!important}
+
+/* Maintain strong contrast for the CTA on the dark deals banner */
+.app-root .home-deals-band .btn-light{
+  background:#f1eadb!important;color:#18382b!important;
+  border:1px solid #e5dcc9!important;
+  box-shadow:0 2px 0 rgba(255,255,255,.45) inset,0 3px 0 #cfc4ad,0 8px 18px rgba(0,0,0,.16)!important;
+}
+.app-root .home-deals-band .btn-light:hover{
+  background:#fff8e9!important;color:#102b20!important;
+}
+.theme-dark .home-deals-band .btn-light{
+  background:#e7dfcd!important;color:#18382b!important;
+}
+@media(max-width:760px){
+  .app-root .site-header .nav{
+    background:var(--ac-white)!important;
+    border:1px solid var(--ac-line)!important;
+    border-radius:16px!important;
+    padding:10px!important;
+    gap:5px;
+  }
+  .app-root .site-header .nav a{justify-content:flex-start;min-height:44px}
+  .theme-dark .site-header .nav{background:#202722!important;border-color:#414a43!important}
+  .app-root .site-header .nav a.active{border-radius:999px}
+}
