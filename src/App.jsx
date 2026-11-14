@@ -106,7 +106,19 @@ function Listing({ products, title, subtitle='', categories=[] }) {
   return <main className="page-shell"><div className="page-heading"><span className="eyebrow">AMAZECART COLLECTION</span><h1>{title}</h1><p>{subtitle}</p></div><div className="listing-toolbar"><div className="filter-group"><SlidersHorizontal size={17}/><select value={cat} onChange={e=>setCat(e.target.value)}><option value="all">All categories</option>{categories.map(c=><option value={c.id} key={c.id}>{c.name}</option>)}</select><select value={platform} onChange={e=>setPlatform(e.target.value)}><option value="all">All stores</option>{['Meesho','Amazon','Flipkart','Myntra','Ajio','Other'].map(p=><option key={p}>{p}</option>)}</select><input className="price-filter" type="number" placeholder="Min ₹" value={min} onChange={e=>setMin(e.target.value)}/><input className="price-filter" type="number" placeholder="Max ₹" value={max} onChange={e=>setMax(e.target.value)}/></div><label className="sort-label">Sort by <select value={sort} onChange={e=>setSort(e.target.value)}><option value="popular">Popularity</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option><option value="discount">Biggest discount</option><option value="newest">Newest first</option></select></label></div><div className="result-count">Showing {sorted.length} products</div><ProductGrid products={sorted}/></main>
 }
 
-function SearchPage({ products,categories }) { const [params]=useSearchParams(); const q=(params.get('q')||'').toLowerCase(); const results=products.filter(p=>`${p.name} ${p.description} ${p.categoryId}`.toLowerCase().includes(q)); return <Listing products={results} title={q?`Results for “${params.get('q')}”`:'Discover products'} subtitle="Search and filter products across available shopping options." categories={categories}/> }
+function SearchPage({ products,categories }) {
+  const [params]=useSearchParams();
+  const rawQuery=(params.get('q')||'').trim().toLocaleLowerCase();
+  const queryTokens=rawQuery.normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').split(/[^a-z0-9]+/).filter(Boolean);
+  const results=queryTokens.length===0
+    ? products
+    : products.filter(product=>{
+        const searchable=[product.name,product.description,product.categoryName,product.categoryId,...(product.tags||[])].filter(Boolean).join(' ').toLocaleLowerCase();
+        const words=searchable.normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').split(/[^a-z0-9]+/).filter(Boolean);
+        return queryTokens.every(queryToken=>words.some(word=>word===queryToken || (queryToken.length>=3 && word.startsWith(queryToken))));
+      });
+  return <Listing products={results} title={rawQuery?\x60Results for “\x24{params.get('q')}”\x60:'Discover products'} subtitle="Search and filter products across available shopping options." categories={categories}/>;
+}
 
 function ProductPage({ products }) {
   const {slug}=useParams(); const navigate=useNavigate(); const product=products.find(p=>p.slug===slug||p.id===slug); const [image,setImage]=useState(0)
