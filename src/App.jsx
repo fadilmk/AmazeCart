@@ -33,8 +33,8 @@ function Header({ search, setSearch }) {
     <nav className={open ? 'nav open' : 'nav'}>
       <NavLink to="/" onClick={()=>setOpen(false)}>Home</NavLink><NavLink to="/categories" onClick={()=>setOpen(false)}>Categories</NavLink><NavLink to="/deals" onClick={()=>setOpen(false)}>Deals</NavLink>
     </nav>
-    <form className="header-search" onSubmit={submit}>
-      <Search size={17}/><input aria-label="Search products" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search products..."/>
+    <form className="header-search" role="search" onSubmit={submit}>
+      <Search size={17}/><input type="search" autoFocus={searchOpen} aria-label="Search products" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search products..." enterKeyHint="search"/>
       <button type="submit" aria-label="Submit search"><ArrowRight size={16}/></button>
     </form>
     <button type="button" className="mobile-search-toggle" onClick={()=>{setSearchOpen(v=>!v);setOpen(false)}} aria-label={searchOpen?'Close search':'Open search'}>{searchOpen?<X/>:<Search/>}</button>
