@@ -58,45 +58,56 @@ function ProductGrid({ products, empty='No products found yet.' }) {
 }
 
 function Home({ products, categories, deals }) {
-  const featured = products.filter(p => p.featured).slice(0, 4)
-  const latest = [...products].sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 8)
-  const picks = featured.length ? featured : latest.slice(0, 4)
-  const spotlight = picks[0] || latest[0]
-  const spotlightOffer = spotlight ? bestOffer(spotlight) : null
-  return <>
-    <section className="home-hero">
-      <div className="home-hero-copy">
-        <span className="home-kicker"><i/> THE SMARTER WAY TO DISCOVER</span>
-        <h1>Find the good stuff.<br/><span>Skip the guesswork.</span></h1>
-        <p>Explore handpicked products, compare listed prices across stores, and choose what works for you. One place to discover more before you buy.</p>
-        <div className="home-hero-actions"><Link to="/search" className="btn btn-primary">Explore products <ArrowRight size={17}/></Link><Link to="/deals" className="home-text-action">See today's deals <ArrowRight size={15}/></Link></div>
-        <div className="home-proof"><span><ShieldCheck size={15}/> Curated product picks</span><span><Tag size={15}/> Store price comparison</span></div>
+  const [activeCategory, setActiveCategory] = useState('all')
+  const latest = [...products].sort((a,b)=>(b.createdAt||0)-(a.createdAt||0))
+  const featured = products.find(p=>p.featured) || latest[0]
+  const offer = featured ? bestOffer(featured) : null
+  const categoryProducts = activeCategory==='all' ? latest : latest.filter(p=>p.categoryId===activeCategory)
+  const picks = categoryProducts.filter(p=>p.id!==featured?.id).slice(0,8)
+  useEffect(()=>{
+    const nodes=document.querySelectorAll('[data-reveal]')
+    if(!('IntersectionObserver' in window)){nodes.forEach(n=>n.classList.add('is-visible'));return}
+    const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target)}}),{threshold:.08,rootMargin:'0px 0px -35px 0px'})
+    nodes.forEach(n=>observer.observe(n))
+    return ()=>observer.disconnect()
+  },[activeCategory,products.length])
+  const tilt=e=>{
+    const el=e.currentTarget,rect=el.getBoundingClientRect()
+    const x=(e.clientX-rect.left)/rect.width-.5,y=(e.clientY-rect.top)/rect.height-.5
+    el.style.setProperty('--tilt-x',`${-y*8}deg`)
+    el.style.setProperty('--tilt-y',`${x*8}deg`)
+    el.style.setProperty('--glare-x',`${(x+.5)*100}%`)
+    el.style.setProperty('--glare-y',`${(y+.5)*100}%`)
+  }
+  const resetTilt=e=>{e.currentTarget.style.setProperty('--tilt-x','0deg');e.currentTarget.style.setProperty('--tilt-y','0deg')}
+  return <main className="archive-home">
+    <div className="archive-masthead"><span>AMAZECART / FIELD NOTES</span><span>INDEPENDENT FINDS · INDIA</span><span>VOL. 01 — 2026</span></div>
+    <section className="archive-hero">
+      <div className="archive-hero-copy" data-reveal>
+        <span className="archive-kicker"><i/> THE INTERNET, EDITED.</span>
+        <h1>Good objects.<br/><em>Better decisions.</em></h1>
+        <p>A considered catalogue of useful gadgets, everyday tools and unexpectedly good finds. We do the browsing. You make the call.</p>
+        <div className="archive-hero-actions"><Link to="/search" className="archive-cta">Explore all finds <span>↗</span></Link><Link to="/deals" className="archive-underlink">Browse under ₹499</Link></div>
       </div>
-      <div className="home-hero-visual">
-        {spotlight ? <Link to={`/product/${spotlight.slug || spotlight.id}`} className="hero-feature-card">
-          <div className="hero-feature-image"><img src={spotlight.images?.[0] || 'https://placehold.co/800x800?text=AmazeCart'} alt={spotlight.name}/><span className="hero-feature-tag">EDITOR'S PICK</span></div>
-          <div className="hero-feature-info"><div><small>FEATURED FIND</small><b>{spotlight.name}</b></div><strong>{spotlightOffer?money(spotlightOffer.price):'Explore'}</strong></div>
-          <span className="hero-feature-link">View product <ArrowRight size={15}/></span>
-        </Link> : <div className="hero-empty-card"><ShoppingBag size={36}/><b>Good finds are on the way.</b><span>New products will appear here.</span></div>}
-        <div className="hero-orbit orbit-one"/><div className="hero-orbit orbit-two"/>
-      </div>
-      <div className="hero-bottom-note"><span>DISCOVER</span><b>Better finds. Clearer choices.</b><span>AMAZECART / INDIA</span></div>
+      <div className="archive-hero-index" data-reveal><span>01 / 04</span><b>OBJECTS<br/>WORTH<br/>KEEPING.</b><small>CURATED, NOT CROWDED.</small></div>
+      <div className="archive-rule"><span>SCROLL TO EXPLORE</span><span>↓</span><span>PRODUCTS / 001—{String(products.length).padStart(3,'0')}</span></div>
     </section>
-    <section className="home-benefits"><div><ShoppingBag/><b>Curated finds</b><span>Useful products, thoughtfully listed</span></div><div><Layers/><b>Compare stores</b><span>See available shopping options</span></div><div><ShieldCheck/><b>Shop your way</b><span>Choose the retailer that suits you</span></div></section>
-    <section className="section category-section">
-      <div className="section-heading"><div><span className="eyebrow">START EXPLORING</span><h2>Shop by category</h2><p className="section-sub">Find what you need, without the endless scrolling.</p></div><Link to="/categories" className="text-link">All categories <ArrowRight size={15}/></Link></div>
-      <div className="category-grid">{categories.filter(c => c.active !== false).slice(0, 6).map(c => <Link to={`/category/${c.id}`} className="category-tile" key={c.id}><span>{c.icon || '↗'}</span><b>{c.name}</b><ArrowRight size={15}/></Link>)}</div>
+    {featured&&<section className="archive-featured" data-reveal>
+      <div className="archive-section-label"><span>01 — EDITOR'S PICK OF THE WEEK</span><span>FEATURED OBJECT</span></div>
+      <Link to={`/product/${featured.slug||featured.id}`} className="archive-featured-card" onMouseMove={tilt} onMouseLeave={resetTilt}>
+        <div className="archive-featured-photo"><img src={featured.images?.[0]||'https://placehold.co/900x900?text=Product'} alt={featured.name} loading="eager"/><span className="archive-photo-index">AC / 001</span></div>
+        <div className="archive-featured-copy"><span className="archive-mono">THE WEEKLY SELECTION</span><h2>{featured.name}</h2><p>{featured.description||'A useful find selected for the collection. Open the product page to inspect details and available stores.'}</p><div className="archive-featured-meta"><span>BEST LISTED PRICE</span><strong>{offer?money(offer.price):'VIEW DETAILS'}</strong></div><span className="archive-cta archive-cta-small">Check price <span>↗</span></span></div>
+      </Link>
+    </section>}
+    <section className="archive-catalogue" data-reveal>
+      <div className="archive-section-label"><span>02 — THE CATALOGUE</span><span>{categoryProducts.length} OBJECTS</span></div>
+      <div className="archive-catalogue-heading"><div><span className="archive-kicker">FIND YOUR NEXT FAVOURITE</span><h2>Useful by design.</h2></div><p>No endless feeds. Just products worth a closer look.</p></div>
+      <div className="archive-filter-wrap"><div className="archive-filters" role="tablist" aria-label="Filter products"><button className={activeCategory==='all'?'active':''} onClick={()=>setActiveCategory('all')}>All finds <span>{latest.length}</span></button>{categories.filter(c=>c.active!==false).map(c=><button key={c.id} className={activeCategory===c.id?'active':''} onClick={()=>setActiveCategory(c.id)}>{c.name}<span>{latest.filter(p=>p.categoryId===c.id).length}</span></button>)}</div></div>
+      {picks.length?<div className="archive-bento">{picks.map((p,i)=>{const o=bestOffer(p);return <article className={`archive-product archive-product-${i%4}`} key={p.id}><Link to={`/product/${p.slug||p.id}`} className="archive-product-image"><img src={p.images?.[0]||'https://placehold.co/700x700?text=Product'} alt={p.name} loading="lazy"/><span className="archive-image-number">AC / {String(i+2).padStart(3,'0')}</span><span className="archive-product-arrow">↗</span></Link><div className="archive-product-info"><div><span className="archive-mono">{p.categoryName||categories.find(c=>c.id===p.categoryId)?.name||'SELECTED FIND'}</span><Link to={`/product/${p.slug||p.id}`}><h3>{p.name}</h3></Link></div><div className="archive-product-bottom"><strong>{o?money(o.price):'PRICE N/A'}</strong><Link to={`/product/${p.slug||p.id}`} className="archive-check">Check price <span>↗</span></Link></div></div></article>})}</div>:<div className="archive-empty">No products in this collection yet. Try another category.</div>}
     </section>
-    <section className="section home-featured-section">
-      <div className="section-heading"><div><span className="eyebrow">HANDPICKED FOR YOU</span><h2>Worth a closer look</h2><p className="section-sub">A few standout finds from the collection.</p></div><Link to="/search" className="text-link">View all products <ArrowRight size={15}/></Link></div>
-      <ProductGrid products={picks}/>
-    </section>
-    <section className="home-deals-band"><div><span className="eyebrow">SHOP WITH A BUDGET IN MIND</span><h2>Small budget.<br/><em>Smart finds.</em></h2><p>Browse collections grouped by price and find something worth adding to your cart.</p><Link to="/deals" className="btn btn-light">Explore all deals <ArrowRight size={16}/></Link></div><div className="budget-pills">{[99,199,299,499].map(n=><Link key={n} to={`/deals?max=${n}`}><small>UNDER</small><b>₹{n}</b><ArrowRight size={16}/></Link>)}</div></section>
-    <section className="section latest-section">
-      <div className="section-heading"><div><span className="eyebrow">FRESH ON THE SHELF</span><h2>Recently added</h2><p className="section-sub">The latest products added to AmazeCart.</p></div></div>
-      <ProductGrid products={latest}/>
-    </section>
-  </>
+    <section className="archive-deals" data-reveal><div><span className="archive-kicker">03 — PRICE-LED DISCOVERY</span><h2>Good finds.<br/><em>Small numbers.</em></h2><p>Set a budget first. See what makes the cut.</p></div><div className="archive-budget-grid">{[99,199,299,499].map(n=><Link to={`/deals?max=${n}`} key={n}><span>UNDER</span><b>₹{n}</b><i>↗</i></Link>)}</div></section>
+    <section className="archive-last-note"><span>AMAZECART / END OF TRANSMISSION</span><p>Less noise. More useful things.</p><Link to="/search">Back to the catalogue ↗</Link></section>
+  </main>
 }
 function Categories({ categories }) { return <main className="page-shell"><div className="page-heading"><span className="eyebrow">FIND YOUR KIND OF THING</span><h1>Categories</h1><p>Explore products by what you're looking for.</p></div><div className="category-grid category-grid-large">{categories.filter(c=>c.active!==false).map(c=><Link to={`/category/${c.id}`} className="category-tile" key={c.id}><span>{c.icon||'✦'}</span><b>{c.name}</b><ArrowRight size={15}/></Link>)}</div></main> }
 
