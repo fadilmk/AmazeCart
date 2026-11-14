@@ -1396,3 +1396,36 @@ p,button,input,select,textarea{font-family:var(--ac-body)}
 @media(prefers-reduced-motion:reduce){
  .hero-feature-card,.product-card,.category-tile,.home-benefits>div,.budget-pills a{transform:none!important}
 }
+
+
+
+/* Smooth page-to-page navigation */
+.route-transition{
+  min-height:45vh;
+  transform-origin:50% 18%;
+  animation:ac-page-enter .58s cubic-bezier(.2,.78,.2,1) both;
+  will-change:opacity,transform,filter;
+}
+@keyframes ac-page-enter{
+  0%{opacity:0;transform:translate3d(0,18px,0) scale(.992);filter:blur(5px)}
+  55%{opacity:1;filter:blur(0)}
+  100%{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}
+}
+.route-transition .page-shell,
+.route-transition>.home-hero{
+  animation:ac-content-settle .7s cubic-bezier(.2,.78,.2,1) both;
+}
+@keyframes ac-content-settle{
+  0%{transform:translateY(9px)}
+  100%{transform:translateY(0)}
+}
+@media(max-width:640px){
+  .route-transition{animation-duration:.46s}
+  @keyframes ac-page-enter{
+    0%{opacity:0;transform:translate3d(0,12px,0) scale(.996);filter:blur(2px)}
+    100%{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .route-transition,.route-transition .page-shell,.route-transition>.home-hero{animation:none!important;filter:none!important;transform:none!important}
+}
