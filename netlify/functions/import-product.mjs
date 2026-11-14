@@ -25,24 +25,33 @@ function extract(h,url){
    candidates.push({url:v,score});
   }
  };
- add(p.image,12);add(meta(h,'og:image'),10);add(meta(h,'og:image:secure_url'),9);add(meta(h,'twitter:image'),8);
- for(const m of h.matchAll(/<img\b[^>]*>/gi)){
-  const tag=m[0],attrs={};
-  for(const a of tag.matchAll(/([:\w-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g))attrs[a[1].toLowerCase()]=a[2]??a[3]??'';
-  const src=attrs.src||attrs['data-src']||attrs['data-lazy-src']||attrs['data-original'];
-  const width=Number(attrs.width)||0,height=Number(attrs.height)||0;
-  add(src,5,attrs.alt,width,height);
-  if(attrs.srcset)for(const item of attrs.srcset.split(',')){const bits=item.trim().split(/\s+/);add(bits[0],6,attrs.alt,width,height);}
+ const isMeesho=/meesho\.com$/i.test(new URL(url).hostname);
+ if(isMeesho){
+  // Meesho's Product JSON-LD image array represents the product gallery.
+  // Do not mix in og:image, page banners, recommendation tiles, or arbitrary <img> tags.
+  add(p.image,20);
+ }else{
+  add(p.image,12);add(meta(h,'og:image'),10);add(meta(h,'og:image:secure_url'),9);add(meta(h,'twitter:image'),8);
+  for(const m of h.matchAll(/<img\b[^>]*>/gi)){
+   const tag=m[0],attrs={};
+   for(const a of tag.matchAll(/([:\w-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g))attrs[a[1].toLowerCase()]=a[2]??a[3]??'';
+   const src=attrs.src||attrs['data-src']||attrs['data-lazy-src']||attrs['data-original'];
+   const width=Number(attrs.width)||0,height=Number(attrs.height)||0;
+   add(src,5,attrs.alt,width,height);
+   if(attrs.srcset)for(const item of attrs.srcset.split(',')){const bits=item.trim().split(/\s+/);add(bits[0],6,attrs.alt,width,height);}
+  }
+  for(const m of h.matchAll(/data-old-hires=["']([^"']+)["']/gi))add(m[1],11);
+  for(const m of h.matchAll(/data-a-dynamic-image=["']([^"']+)["']/gi)){try{add(Object.keys(JSON.parse(m[1].replace(/&quot;/g,'"').replace(/&amp;/g,'&'))),11);}catch{}}
+  for(const m of h.matchAll(/!\[[^\]]*\]\((https?:\/\/[^)]+)\)/g))add(m[1],4);
  }
- for(const m of h.matchAll(/data-old-hires=["']([^"']+)["']/gi))add(m[1],11);
- for(const m of h.matchAll(/data-a-dynamic-image=["']([^"']+)["']/gi)){try{add(Object.keys(JSON.parse(m[1].replace(/&quot;/g,'"').replace(/&amp;/g,'&'))),11);}catch{}}
- for(const m of h.matchAll(/!\[[^\]]*\]\((https?:\/\/[^)]+)\)/g))add(m[1],4);
- const isMeesho=url.includes('meesho.com');
- const filtered=isMeesho
-  ? candidates.filter(x=>/^https:\/\/images\.meesho\.com\/images\/products\//i.test(x.url)&&!/(?:offer|discount|banner|coupon|logo|badge)/i.test(x.url))
-  : candidates;
- const seen=new Set(),images=filtered.sort((a,b)=>b.score-a.score).filter(x=>{if(seen.has(x.url))return false;seen.add(x.url);return true;}).slice(0,6).map(x=>x.url);
- let price=Number(o.price||o.lowPrice||0)||'';
+ const seen=new Set(),images=candidates.sort((a,b)=>b.score-a.score).filter(x=>{
+  if(seen.has(x.url))return false;seen.add(x.url);return true;
+ }).slice(0,6).map(x=>{
+  if(isMeesho){
+   try{const u=new URL(x.url);if(u.searchParams.has('width'))u.searchParams.set('width','1200');return u.toString();}catch{}
+  }
+  return x.url;
+ }); let price=Number(o.price||o.lowPrice||0)||'';
  if(!price){const v=meta(h,'product:price:amount')||(h.match(/(?:₹|INR)\s*([\d,]+(?:\.\d{1,2})?)/i)||[])[1];price=Number(String(v||'').replace(/,/g,''))||'';}
  return {name,description,images,price,originalPrice:'',platform:url.includes('meesho')?'Meesho':url.includes('flipkart')?'Flipkart':'Amazon',productUrl:url,source:'decodo'};
 }
