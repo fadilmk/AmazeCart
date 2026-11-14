@@ -175,8 +175,8 @@ function Admin({ products,categories,deals,refresh,onProductDeleted }) {
 export default function App(){
   const location=useLocation();const isAdminRoute=location.pathname.startsWith('/admin');
   useEffect(()=>{window.scrollTo({top:0,left:0,behavior:'auto'});},[location.pathname,location.search]);
-  const [theme,setTheme]=useState(()=>localStorage.getItem('amazecart-theme')||'light');
-  useEffect(()=>{localStorage.setItem('amazecart-theme',theme)},[theme]);
+  const [theme,setTheme]=useState(()=>localStorage.getItem('amazecart-theme-choice')||(window.matchMedia?.('(prefers-color-scheme: dark)').matches?'dark':'light'));
+  useEffect(()=>{localStorage.setItem('amazecart-theme-choice',theme)},[theme]);
   const [products,setProducts]=useState(demoProducts);const [categories,setCategories]=useState(demoCategories);const [deals,setDeals]=useState([]);const [search,setSearch]=useState('');const [user,setUser]=useState(null);const [loading,setLoading]=useState(true)
   const refresh=async()=>{try{const [p,c,d]=await Promise.all([loadCollection('products'),loadCollection('categories'),loadCollection('deals')]);setProducts(p);setCategories(c);setDeals(d)}catch(e){console.error(e)}}
   useEffect(()=>{refresh().finally(()=>setLoading(false));if(auth)return onAuthStateChanged(auth,u=>{setUser(u);if(u)refresh()});},[])
