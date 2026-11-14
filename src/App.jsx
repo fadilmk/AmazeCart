@@ -19,16 +19,28 @@ function PlatformLogo({ platform }) {
 
 function Header({ search, setSearch }) {
   const [open, setOpen] = useState(false)
-  return <header className="site-header"><div className="header-inner">
-    <Link to="/" className="brand"><span className="brand-mark"><ShoppingBag size={20}/></span><span>Amaze<span>Cart</span></span></Link>
+  const [searchOpen, setSearchOpen] = useState(false)
+  const navigate = useNavigate()
+  const submit = e => {
+    e.preventDefault()
+    const query = search.trim()
+    setSearchOpen(false)
+    setOpen(false)
+    navigate(query ? `/search?q=${encodeURIComponent(query)}` : '/search')
+  }
+  return <header className={`site-header ${searchOpen?'search-open':''}`}><div className="header-inner">
+    <Link to="/" className="brand" onClick={()=>{setOpen(false);setSearchOpen(false)}}><span className="brand-mark"><ShoppingBag size={20}/></span><span>Amaze<span>Cart</span></span></Link>
     <nav className={open ? 'nav open' : 'nav'}>
       <NavLink to="/" onClick={()=>setOpen(false)}>Home</NavLink><NavLink to="/categories" onClick={()=>setOpen(false)}>Categories</NavLink><NavLink to="/deals" onClick={()=>setOpen(false)}>Deals</NavLink>
     </nav>
-    <form className="header-search" onSubmit={e=>{e.preventDefault();location.href=`/search?q=${encodeURIComponent(search)}`}}><Search size={17}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search products..."/><button aria-label="Search"><ArrowRight size={16}/></button></form>
-    <button className="mobile-menu" onClick={()=>setOpen(!open)} aria-label="Toggle menu">{open?<X/>:<Menu/>}</button>
+    <form className="header-search" onSubmit={submit}>
+      <Search size={17}/><input aria-label="Search products" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search products..."/>
+      <button type="submit" aria-label="Submit search"><ArrowRight size={16}/></button>
+    </form>
+    <button type="button" className="mobile-search-toggle" onClick={()=>{setSearchOpen(v=>!v);setOpen(false)}} aria-label={searchOpen?'Close search':'Open search'}>{searchOpen?<X/>:<Search/>}</button>
+    <button type="button" className="mobile-menu" onClick={()=>{setOpen(v=>!v);setSearchOpen(false)}} aria-label="Toggle menu">{open?<X/>:<Menu/>}</button>
   </div></header>
 }
-
 function ProductCard({ product }) {
   const offer = bestOffer(product); const off = discount(offer)
   return <article className="product-card"><Link to={`/product/${product.slug || product.id}`} className="product-image-wrap">
@@ -49,41 +61,39 @@ function Home({ products, categories, deals }) {
   const featured = products.filter(p => p.featured).slice(0, 4)
   const latest = [...products].sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).slice(0, 8)
   const picks = featured.length ? featured : latest.slice(0, 4)
+  const spotlight = picks[0] || latest[0]
+  const spotlightOffer = spotlight ? bestOffer(spotlight) : null
   return <>
-    <section className="hero">
-      <div className="hero-copy">
-        <span className="eyebrow">THE AMAZECART EDIT</span>
-        <h1>Useful things.<br/><em>Chosen well.</em></h1>
-        <p>Good finds for your desk, home and everyday life. Browse the products, compare listed prices and choose the store that works for you.</p>
-        <div className="hero-actions">
-          <Link to="/search" className="btn btn-primary">Explore the collection <ArrowRight size={16}/></Link>
-          <Link to="/deals" className="hero-secondary">Browse current deals</Link>
-        </div>
-        <div className="hero-note">A considered collection of everyday finds</div>
+    <section className="home-hero">
+      <div className="home-hero-copy">
+        <span className="home-kicker"><i/> THE SMARTER WAY TO DISCOVER</span>
+        <h1>Find the good stuff.<br/><span>Skip the guesswork.</span></h1>
+        <p>Explore handpicked products, compare listed prices across stores, and choose what works for you. One place to discover more before you buy.</p>
+        <div className="home-hero-actions"><Link to="/search" className="btn btn-primary">Explore products <ArrowRight size={17}/></Link><Link to="/deals" className="home-text-action">See today's deals <ArrowRight size={15}/></Link></div>
+        <div className="home-proof"><span><ShieldCheck size={15}/> Curated product picks</span><span><Tag size={15}/> Store price comparison</span></div>
       </div>
-      <div className="hero-art">
-        <div className="editorial-visual">
-          <div className="editorial-image editorial-image-main"><img src="https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=1100&q=85" alt="Everyday technology and desk accessories" loading="eager" fetchPriority="high" decoding="async"/></div>
-          <div className="editorial-image editorial-image-top"><img src="https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=700&q=85" alt="Wireless audio accessories" loading="eager" decoding="async"/></div>
-          <div className="editorial-image editorial-image-bottom"><img src="https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=700&q=85" alt="Laptop desk accessories" loading="eager" decoding="async"/></div>
-          <div className="editorial-index">OBJECTS FOR EVERYDAY LIVING <span>✳</span></div>
-        </div>
+      <div className="home-hero-visual">
+        {spotlight ? <Link to={`/product/${spotlight.slug || spotlight.id}`} className="hero-feature-card">
+          <div className="hero-feature-image"><img src={spotlight.images?.[0] || 'https://placehold.co/800x800?text=AmazeCart'} alt={spotlight.name}/><span className="hero-feature-tag">EDITOR'S PICK</span></div>
+          <div className="hero-feature-info"><div><small>FEATURED FIND</small><b>{spotlight.name}</b></div><strong>{spotlightOffer?money(spotlightOffer.price):'Explore'}</strong></div>
+          <span className="hero-feature-link">View product <ArrowRight size={15}/></span>
+        </Link> : <div className="hero-empty-card"><ShoppingBag size={36}/><b>Good finds are on the way.</b><span>New products will appear here.</span></div>}
+        <div className="hero-orbit orbit-one"/><div className="hero-orbit orbit-two"/>
       </div>
+      <div className="hero-bottom-note"><span>DISCOVER</span><b>Better finds. Clearer choices.</b><span>AMAZECART / INDIA</span></div>
     </section>
+    <section className="home-benefits"><div><ShoppingBag/><b>Curated finds</b><span>Useful products, thoughtfully listed</span></div><div><Layers/><b>Compare stores</b><span>See available shopping options</span></div><div><ShieldCheck/><b>Shop your way</b><span>Choose the retailer that suits you</span></div></section>
     <section className="section category-section">
-      <div className="section-heading"><div><span className="eyebrow">BROWSE BY NEED</span><h2>What are you looking for?</h2></div><Link to="/categories" className="text-link">All categories <ArrowRight size={15}/></Link></div>
+      <div className="section-heading"><div><span className="eyebrow">START EXPLORING</span><h2>Shop by category</h2><p className="section-sub">Find what you need, without the endless scrolling.</p></div><Link to="/categories" className="text-link">All categories <ArrowRight size={15}/></Link></div>
       <div className="category-grid">{categories.filter(c => c.active !== false).slice(0, 6).map(c => <Link to={`/category/${c.id}`} className="category-tile" key={c.id}><span>{c.icon || '↗'}</span><b>{c.name}</b><ArrowRight size={15}/></Link>)}</div>
     </section>
-    <section className="section tinted">
-      <div className="section-heading"><div><span className="eyebrow">WORTH A CLOSER LOOK</span><h2>Featured finds</h2><p className="section-sub">A few useful things to start with.</p></div><Link to="/search" className="text-link">View everything <ArrowRight size={15}/></Link></div>
+    <section className="section home-featured-section">
+      <div className="section-heading"><div><span className="eyebrow">HANDPICKED FOR YOU</span><h2>Worth a closer look</h2><p className="section-sub">A few standout finds from the collection.</p></div><Link to="/search" className="text-link">View all products <ArrowRight size={15}/></Link></div>
       <ProductGrid products={picks}/>
     </section>
-    <section className="section price-edit">
-      <div className="section-heading"><div><span className="eyebrow">SHOP WITH A BUDGET IN MIND</span><h2>Good finds, under your limit.</h2></div><Link to="/deals" className="text-link">All deals <ArrowRight size={15}/></Link></div>
-      <div className="deal-banners">{[99,199,299,499].map(n => <Link key={n} to={`/deals?max=${n}`} className="deal-banner"><span>UNDER</span><strong>₹{n}</strong><span>Explore finds <ArrowRight size={14}/></span></Link>)}</div>
-    </section>
-    <section className="section tinted latest-section">
-      <div className="section-heading"><div><span className="eyebrow">NEW TO AMAZECART</span><h2>Recently added</h2></div></div>
+    <section className="home-deals-band"><div><span className="eyebrow">SHOP WITH A BUDGET IN MIND</span><h2>Small budget.<br/><em>Smart finds.</em></h2><p>Browse collections grouped by price and find something worth adding to your cart.</p><Link to="/deals" className="btn btn-light">Explore all deals <ArrowRight size={16}/></Link></div><div className="budget-pills">{[99,199,299,499].map(n=><Link key={n} to={`/deals?max=${n}`}><small>UNDER</small><b>₹{n}</b><ArrowRight size={16}/></Link>)}</div></section>
+    <section className="section latest-section">
+      <div className="section-heading"><div><span className="eyebrow">FRESH ON THE SHELF</span><h2>Recently added</h2><p className="section-sub">The latest products added to AmazeCart.</p></div></div>
       <ProductGrid products={latest}/>
     </section>
   </>
